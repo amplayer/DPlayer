@@ -518,12 +518,12 @@ class DPlayer {
 
         this.volume(this.user.get('volume'), true, true);
 
-        this.initSubtitle();
+        this.initSubtitle(this.options.subtitle);
     }
 
-    initSubtitle() {
-        if (this.options.subtitle) {
-            this.subtitle = new Subtitle(this.template.subtitle, this.video, this.options.subtitle, this.events);
+    initSubtitle(options, template) {
+        if (options) {
+            this.subtitle = new Subtitle(template || this.template.subtitle, this.video, options, this.events);
             if (!this.user.get('subtitle')) {
                 this.subtitle.hide();
             }

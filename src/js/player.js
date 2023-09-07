@@ -569,6 +569,19 @@ class DPlayer {
         }
     }
 
+    // [EX+]
+    initSubtitle(subtitle, template) {
+        if (!subtitle) return;
+        this.subtitle = new Subtitle(template || this.template.subtitle, this.video, subtitle, this.events);
+        // init multi subtitles function(sub update)
+        if (Array.isArray(subtitle.url)) {
+            this.subtitles = new Subtitles(this);
+        }
+        if (!this.user.get('subtitle')) {
+            this.subtitle.hide();
+        }
+    }
+
     switchQuality(index) {
         index = typeof index === 'string' ? parseInt(index) : index;
         if (this.qualityIndex === index || this.switchingQuality) {

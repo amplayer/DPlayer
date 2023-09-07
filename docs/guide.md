@@ -14,27 +14,15 @@ sidebar: auto
 
 ## Special Thanks
 
-### Special Sponsors
+### Sponsors
 
 &nbsp;
 
 <div>
-<a href="https://www.cdnbye.com" target="_blank">
-    <img height="60px" src="https://cdnbye.oss-cn-beijing.aliyuncs.com/pic/cdnbye-dp.jpeg">
-</a>
-</div>
-
-<div>
 <a href="https://www.dogecloud.com/?ref=dplayer" target="_blank">
-    <img height="60px" src="https://i.imgur.com/C2NgugY.png">
+    <img height="60px" src="https://player.dogecloud.com/img/logo_with_product3.png">
 </a>
 </div>
-
-### Sponsors
-
-| [极酷社](https://www.acg.app) |
-| :---------------------------: |
-
 
 ## Installation
 
@@ -103,13 +91,15 @@ You can custom your player instance by those options
 | loop                 | false                              | video loop                                                                                                                                                 |
 | lang                 | navigator.language.toLowerCase()   | values: 'en', 'zh-cn', 'zh-tw'                                                                                                                             |
 | screenshot           | false                              | enable screenshot, if true, video and video poster must enable Cross-Origin                                                                                |
-| airplay              | true                               | enable airplay in Safari                                                                                                                                   |
+| airplay              | false                              | enable airplay in Safari                                                                                                                                   |
+| chromecast           | false                              | enable Chromecast                                                                                                                                          |
 | hotkey               | true                               | enable hotkey, support FF, FR, volume control, play & pause                                                                                                |
 | preload              | 'auto'                             | values: 'none', 'metadata', 'auto'                                                                                                                         |
 | volume               | 0.7                                | default volume, notice that player will remember user setting, default volume will not work after user set volume themselves                               |
 | playbackSpeed        | [0.5, 0.75, 1, 1.25, 1.5, 2]       | optional playback speed, or or you can set a custom one                                                                                                    |
 | logo                 | -                                  | showing logo in the top left corner, you can adjust its size and position by CSS                                                                           |
 | apiBackend           | -                                  | getting and sending danmaku in your way, see [#live](#live)                                                                                                |
+| preventClickToggle   | false                              | prevent toggle video play/pause status when click player                                                                                                   |
 | video                | -                                  | video info                                                                                                                                                 |
 | video.quality        | -                                  | see [#Quality switching](#quality-switching)                                                                                                               |
 | video.defaultQuality | -                                  | see [#Quality switching](#quality-switching)                                                                                                               |
@@ -133,6 +123,7 @@ You can custom your player instance by those options
 | danmaku.user         | 'DIYgod'                           | danmaku user name                                                                                                                                          |
 | danmaku.bottom       | -                                  | values like: '10px' '10%', the distance between the danmaku bottom and player bottom, in order to prevent warding off subtitle                             |
 | danmaku.unlimited    | false                              | display all danmaku even though danmaku overlap, notice that player will remember user setting, default setting will not work after user set it themselves |
+| danmaku.speedRate    | 1                                  | danmaku speed multiplier, the larger the faster                                                                                                            |
 | contextmenu          | []                                 | custom contextmenu                                                                                                                                         |
 | highlight            | []                                 | custom time markers upon progress bar                                                                                                                      |
 | mutex                | true                               | prevent to play multiple player at the same time, pause other players when this player start play                                                          |
@@ -172,6 +163,7 @@ const dp = new DPlayer({
         user: 'DIYgod',
         bottom: '15%',
         unlimited: true,
+        speedRate: 0.5,
     },
     contextmenu: [
         {
@@ -212,7 +204,7 @@ const dp = new DPlayer({
 
 -   `dp.toggle()`: toggle between play and pause
 
--   `dp.on(event: string, handler: function)`: bind video and player events, [see more details](http://dplayer.js.org/#/home?id=event-binding)
+-   `dp.on(event: string, handler: function)`: bind video and player events, [see more details](https://dplayer.diygod.dev/guide.html#event-binding)
 
 -   `dp.switchVideo(video, danmaku)`: switch to a new video
 
@@ -709,7 +701,7 @@ DPlayer can work with any MSE library via `customType` option.
 
 ```js
 var type = 'normal';
-if(Hls.isSupported() && Hls.WEBRTC_SUPPORT) {
+if (Hls.isSupported() && Hls.WEBRTC_SUPPORT) {
     type = 'customHls';
 }
 const dp = new DPlayer({
@@ -718,19 +710,19 @@ const dp = new DPlayer({
         url: 'demo.m3u8',
         type: type,
         customType: {
-            'customHls': function (video, player) {
+            customHls: function (video, player) {
                 const hls = new Hls({
                     debug: false,
                     // Other hlsjsConfig options provided by hls.js
                     p2pConfig: {
-                        live: false,        
+                        live: false,
                         // Other p2pConfig options provided by CDNBye http://www.cdnbye.com/en/
-                    }
+                    },
                 });
                 hls.loadSource(video.src);
                 hls.attachMedia(video);
-            }
-        }
+            },
+        },
     },
 });
 ```
@@ -757,11 +749,11 @@ const dp = new DPlayer({
     apiBackend: {
         read: function (options) {
             console.log('Pretend to connect WebSocket');
-            callback();
+            options.success([]);
         },
         send: function (options) {
             console.log('Pretend to send danmaku via WebSocket', options.data);
-            callback();
+            options.success();
         },
     },
     video: {

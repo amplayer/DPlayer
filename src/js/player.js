@@ -559,19 +559,6 @@ class DPlayer {
         this.initSubtitle(this.options.subtitle);
     }
 
-    initSubtitle(subtitle, template) {
-        if (!subtitle) return;
-        // init old single subtitle function(sub show and style)
-        this.subtitle = new Subtitle(template || this.template.subtitle, this.video, subtitle, this.events);
-        // init multi subtitles function(sub update)
-        if (Array.isArray(subtitle.url)) {
-            this.subtitles = new Subtitles(this);
-        }
-        if (!this.user.get('subtitle')) {
-            this.subtitle.hide();
-        }
-    }
-
     // [EX+]
     initSubtitle(subtitle, template) {
         if (!subtitle) return;

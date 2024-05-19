@@ -7,9 +7,9 @@ module.exports = {
     mode: 'production',
 
     bail: true,
-
+    /*
     devtool: 'source-map',
-
+//*/
     entry: {
         DPlayer: './src/js/index.js',
     },

@@ -328,6 +328,22 @@ class DPlayer {
     }
 
     /**
+     * deattach event
+     * [EX+]
+     */
+    off(name, index) {
+        this.events.off(name, index);
+    }
+
+    /**
+     * deattach event
+     * [EX+]
+     */
+    trigger(name, info) {
+        this.events.trigger(name, info);
+    }
+
+    /**
      * Switch to a new video
      *
      * @param {Object} video - new video info
@@ -387,12 +403,19 @@ class DPlayer {
                 case 'hls':
                     if (window.Hls) {
                         if (window.Hls.isSupported()) {
+                            // [EX+]
+                            if ('hls' in this.plugins) {
+                                var eventIndex = this.plugins.hls.eventIndex;
+                                this.events.trigger('destroy');
+                                if (eventIndex !== null) this.events.off('destroy', eventIndex);
+                            }
+
                             const options = this.options.pluginOptions.hls;
                             const hls = new window.Hls(options);
-                            this.plugins.hls = hls;
+                            this.plugins.hls = { player: hls, eventIndex: 0 };
                             hls.loadSource(video.src);
                             hls.attachMedia(video);
-                            this.events.on('destroy', () => {
+                            this.plugins.hls.eventIndex = this.events.on('destroy', () => {
                                 hls.destroy();
                                 delete this.plugins.hls;
                             });
@@ -408,6 +431,13 @@ class DPlayer {
                 case 'flv':
                     if (window.flvjs) {
                         if (window.flvjs.isSupported()) {
+                            // [EX+]
+                            if ('flvjs' in this.plugins) {
+                                var eventIndex = this.plugins.flvjs.eventIndex;
+                                this.events.trigger('destroy');
+                                if (eventIndex !== null) this.events.off('destroy', eventIndex);
+                            }
+
                             const flvPlayer = window.flvjs.createPlayer(
                                 Object.assign(this.options.pluginOptions.flv.mediaDataSource || {}, {
                                     type: 'flv',
@@ -415,10 +445,10 @@ class DPlayer {
                                 }),
                                 this.options.pluginOptions.flv.config
                             );
-                            this.plugins.flvjs = flvPlayer;
+                            this.plugins.flvjs = { player: flvPlayer, eventIndex: 0 };
                             flvPlayer.attachMediaElement(video);
                             flvPlayer.load();
-                            this.events.on('destroy', () => {
+                            this.plugins.flvjs.eventIndex = this.events.on('destroy', () => {
                                 flvPlayer.unload();
                                 flvPlayer.detachMediaElement();
                                 flvPlayer.destroy();
@@ -435,11 +465,18 @@ class DPlayer {
                 // https://github.com/Dash-Industry-Forum/dash.js
                 case 'dash':
                     if (window.dashjs) {
+                        // [EX+]
+                        if ('dash' in this.plugins) {
+                            var eventIndex = this.plugins.dash.eventIndex;
+                            this.events.trigger('destroy');
+                            if (eventIndex !== null) this.events.off('destroy', eventIndex);
+                        }
+
                         const dashjsPlayer = window.dashjs.MediaPlayer().create().initialize(video, video.src, false);
                         const options = this.options.pluginOptions.dash;
                         dashjsPlayer.updateSettings(options);
-                        this.plugins.dash = dashjsPlayer;
-                        this.events.on('destroy', () => {
+                        this.plugins.dash = { player: dashjsPlayer, eventIndex: 0 };
+                        this.plugins.dash.eventIndex = this.events.on('destroy', () => {
                             window.dashjs.MediaPlayer().reset();
                             delete this.plugins.dash;
                         });
@@ -452,10 +489,17 @@ class DPlayer {
                 case 'webtorrent':
                     if (window.WebTorrent) {
                         if (window.WebTorrent.WEBRTC_SUPPORT) {
+                            // [EX+]
+                            if ('webtorrent' in this.plugins) {
+                                var eventIndex = this.plugins.webtorrent.eventIndex;
+                                this.events.trigger('destroy');
+                                if (eventIndex !== null) this.events.off('destroy', eventIndex);
+                            }
+
                             this.container.classList.add('dplayer-loading');
                             const options = this.options.pluginOptions.webtorrent;
                             const client = new window.WebTorrent(options);
-                            this.plugins.webtorrent = client;
+                            this.plugins.webtorrent = { player: client, eventIndex: 0 };
                             const torrentId = video.src;
                             video.src = '';
                             video.preload = 'metadata';
@@ -467,7 +511,7 @@ class DPlayer {
                                     controls: false,
                                 });
                             });
-                            this.events.on('destroy', () => {
+                            this.plugins.webtorrent.eventIndex = this.events.on('destroy', () => {
                                 client.remove(torrentId);
                                 client.destroy();
                                 delete this.plugins.webtorrent;

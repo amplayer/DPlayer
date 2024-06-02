@@ -60,8 +60,18 @@ class Events {
             if (!this.events[name]) {
                 this.events[name] = [];
             }
+
+            // [EX+]
+            var index = this.events[name].length;
+
             this.events[name].push(callback);
+
+            // [EX+]
+            return index;
         }
+
+        // [EX+]
+        return null;
     }
 
     trigger(name, info) {
@@ -81,6 +91,11 @@ class Events {
 
         console.error(`Unknown event name: ${name}`);
         return null;
+    }
+
+    // [EX+]
+    off(name, index) {
+        if (this.events[name]) this.events[name].splice(index, 1);
     }
 }
 

@@ -435,19 +435,9 @@ class DPlayer {
                         if (window.flvjs.isSupported()) {
                             // [EX+]
                             if ('flvjs' in this.plugins) {
-                                /*
-                                const flvPlayer=this.plugins.flvjs.player;
-                                flvPlayer.unload();
-                                flvPlayer.detachMediaElement();
-                                flvPlayer._mediaDataSource.url = videoURL;
-                                flvPlayer.attachMediaElement(video);
-                                flvPlayer.load();
-                                return;
-                                /*/
                                 var eventIndex = this.plugins.flvjs.eventIndex;
                                 this.events.trigger('destroy');
                                 if (eventIndex !== null) this.events.off('destroy', eventIndex);
-                                //*/
                             }
 
                             const flvPlayer = window.flvjs.createPlayer(

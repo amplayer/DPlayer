@@ -353,7 +353,8 @@ class DPlayer {
         this.pause();
         this.video.poster = video.pic ? video.pic : '';
         this.video.src = video.url;
-        this.initMSE(this.video, video.type || 'auto');
+        // this.video.src 会变成空白，所以新增第三个参数，单独传递视频网址
+        this.initMSE(this.video, video.type || 'auto', video.url);
         if (danmakuAPI) {
             this.template.danmakuLoading.style.display = 'block';
             this.bar.set('played', 0, 'width');
@@ -373,7 +374,8 @@ class DPlayer {
         }
     }
 
-    initMSE(video, type) {
+    initMSE(video, type, videoURL) {
+        if (!videoURL) videoURL = video.src;
         this.type = type;
         if (this.options.video.customType && this.options.video.customType[type]) {
             if (Object.prototype.toString.call(this.options.video.customType[type]) === '[object Function]') {
@@ -383,11 +385,11 @@ class DPlayer {
             }
         } else {
             if (this.type === 'auto') {
-                if (/m3u8(#|\?|$)/i.exec(video.src)) {
+                if (/m3u8(#|\?|$)/i.exec(videoURL)) {
                     this.type = 'hls';
-                } else if (/.flv(#|\?|$)/i.exec(video.src)) {
+                } else if (/.flv(#|\?|$)/i.exec(videoURL)) {
                     this.type = 'flv';
-                } else if (/.mpd(#|\?|$)/i.exec(video.src)) {
+                } else if (/.mpd(#|\?|$)/i.exec(videoURL)) {
                     this.type = 'dash';
                 } else {
                     this.type = 'normal';
@@ -413,7 +415,7 @@ class DPlayer {
                             const options = this.options.pluginOptions.hls;
                             const hls = new window.Hls(options);
                             this.plugins.hls = { player: hls, eventIndex: 0 };
-                            hls.loadSource(video.src);
+                            hls.loadSource(videoURL);
                             hls.attachMedia(video);
                             this.plugins.hls.eventIndex = this.events.on('destroy', () => {
                                 hls.destroy();
@@ -433,15 +435,25 @@ class DPlayer {
                         if (window.flvjs.isSupported()) {
                             // [EX+]
                             if ('flvjs' in this.plugins) {
+                                /*
+                                const flvPlayer=this.plugins.flvjs.player;
+                                flvPlayer.unload();
+                                flvPlayer.detachMediaElement();
+                                flvPlayer._mediaDataSource.url = videoURL;
+                                flvPlayer.attachMediaElement(video);
+                                flvPlayer.load();
+                                return;
+                                /*/
                                 var eventIndex = this.plugins.flvjs.eventIndex;
                                 this.events.trigger('destroy');
                                 if (eventIndex !== null) this.events.off('destroy', eventIndex);
+                                //*/
                             }
 
                             const flvPlayer = window.flvjs.createPlayer(
                                 Object.assign(this.options.pluginOptions.flv.mediaDataSource || {}, {
                                     type: 'flv',
-                                    url: video.src,
+                                    url: videoURL,
                                 }),
                                 this.options.pluginOptions.flv.config
                             );
@@ -472,7 +484,7 @@ class DPlayer {
                             if (eventIndex !== null) this.events.off('destroy', eventIndex);
                         }
 
-                        const dashjsPlayer = window.dashjs.MediaPlayer().create().initialize(video, video.src, false);
+                        const dashjsPlayer = window.dashjs.MediaPlayer().create().initialize(video, videoURL, false);
                         const options = this.options.pluginOptions.dash;
                         dashjsPlayer.updateSettings(options);
                         this.plugins.dash = { player: dashjsPlayer, eventIndex: 0 };
@@ -500,7 +512,7 @@ class DPlayer {
                             const options = this.options.pluginOptions.webtorrent;
                             const client = new window.WebTorrent(options);
                             this.plugins.webtorrent = { player: client, eventIndex: 0 };
-                            const torrentId = video.src;
+                            const torrentId = videoURL;
                             video.src = '';
                             video.preload = 'metadata';
                             video.addEventListener('durationchange', () => this.container.classList.remove('dplayer-loading'), { once: true });
@@ -527,8 +539,8 @@ class DPlayer {
         }
     }
 
-    initVideo(video, type) {
-        this.initMSE(video, type);
+    initVideo(video, type, videoURL) {
+        this.initMSE(video, type, videoURL);
 
         /**
          * video events

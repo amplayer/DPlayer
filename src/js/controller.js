@@ -22,7 +22,7 @@ class Controller {
         this.initPlayButton();
         this.initThumbnails();
         this.initPlayedBar();
-        this.initVideoTouch(); // [SWH|+]
+        //this.initVideoTouch(); // [SWH|+]
         this.initFullButton();
         this.initQualityButton();
         this.initScreenshotButton();
@@ -48,6 +48,20 @@ class Controller {
         this.player.template.mobilePlayButton.addEventListener('click', () => {
             this.player.toggle();
         });
+        
+        // [SWH|+] ---\
+        this.player.template.mobileBackwardButton.addEventListener('click', () => {
+            let t = Math.max(this.player.video.currentTime - 10, 0);
+            this.player.seek(t);
+            this.player.controller.setAutoHide();
+        });
+        this.player.template.mobileForwardButton.addEventListener('click', () => {
+            let t = Math.min(this.player.video.currentTime + 10, this.player.video.duration);
+            this.player.seek(t);
+            this.player.controller.setAutoHide();
+        });
+        // -----------/
+
 
         if (!utils.isMobile) {
             if (!this.player.options.preventClickToggle) {

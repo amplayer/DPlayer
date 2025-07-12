@@ -687,20 +687,28 @@
     }
 }
 
-.dplayer-mobile-play {
+.dplayer-mobile-button {
     display: none;
-    width: 50px;
+    width: 200px;
     height: 50px;
-    border: none;
-    background-color: transparent;
-    outline: none;
-    cursor: pointer;
     box-sizing: border-box;
     position: absolute;
     bottom: 0;
     opacity: 0.8;
-    position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
+    .dplayer-mobile-play, button {
+        width: 50px;
+        height: 50px;
+        outline: none;
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        color: white;
+    }
+    button i {
+        font-size: 30px;
+    }
 }

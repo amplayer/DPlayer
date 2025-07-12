@@ -275,6 +275,16 @@
     {{ /each }}
 </div>
 <div class="dplayer-notice-list"></div>
-<button class="dplayer-mobile-play">
+<div class="dplayer-mobile-button">
+    <button class="dplayer-mobile-backward">
+        <i class="fa fa-backward"></i>
+        -10s
+    </button>
+    <button class="dplayer-mobile-play">
     {{@ icons.play }}
-</button>
+    </button>
+    <button class="dplayer-mobile-forward">
+        <i class="fa fa-forward"></i>
+        +10s
+    </button>
+</div>

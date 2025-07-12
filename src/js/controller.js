@@ -22,7 +22,11 @@ class Controller {
         this.initPlayButton();
         this.initThumbnails();
         this.initPlayedBar();
-        //this.initVideoTouch(); // [SWH|+]
+        
+        if (this.player.options.touchVideoChangeProgress){
+            this.initVideoTouch(); // [SWH|+]
+        }
+
         this.initFullButton();
         this.initQualityButton();
         this.initScreenshotButton();

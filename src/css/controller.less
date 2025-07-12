@@ -689,7 +689,8 @@
 
 .dplayer-mobile-button {
     display: none;
-    width: 200px;
+    max-width: 250px;
+    width: 100%;
     height: 50px;
     box-sizing: border-box;
     position: absolute;
@@ -707,9 +708,18 @@
         border: none;
         background-color: transparent;
         color: white;
+        vertical-align: middle;
+        position: relative;
     }
-    button i {
+    button > i {
         font-size: 30px;
+    }
+    button > span{
+        position: absolute;
+        display: block;
+        width: 100%;
+        text-align: center;
+        left: 0;
     }
 }
 .dplayer-live .dplayer-mobile-button {

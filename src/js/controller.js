@@ -192,11 +192,13 @@ class Controller {
 
     // [SWH|+]
     initVideoTouch() {
-        let xStart = 0, vLeft = 0;
+        if (!utils.isMobile) return;
+        let xStart = 0, currentTime = 0;
         const getPercentage = (e) => {
             let x = e.clientX || e.changedTouches[0].clientX;
             if (x == xStart) return false;
-            let percentage = (x - vLeft) / this.player.template.video.clientWidth;
+            let percentage = (x - xStart) / this.player.template.video.clientWidth;
+            percentage = (currentTime / this.player.video.duration) + percentage;
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             return percentage;
@@ -211,23 +213,27 @@ class Controller {
             this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
         };
         const seekEnd = (e) => {
-            if (this.player.options.live) return;
+            if (this.player.options.live || !this.player.video.duration) return;
             document.removeEventListener(utils.nameMap.dragEnd, seekEnd);
             document.removeEventListener(utils.nameMap.dragMove, seekMove);
             let percentage = getPercentage(e);
             if (percentage === false) return;
             this.player.bar.set('played', percentage, 'width');
-            this.player.seek(this.player.bar.get('played') * this.player.video.duration);
+            this.player.seek(percentage * this.player.video.duration);
             this.player.moveBar = false;
             this.hide();
         };
-        this.player.template.video.addEventListener(utils.nameMap.dragStart, (e) => {
-            if (this.player.options.live) return;
+        const dragStart = (e) => {
+            if (this.player.options.live || !this.player.video.duration) return;
             xStart = e.clientX || e.changedTouches[0].clientX;
-            vLeft = this.player.template.video.getBoundingClientRect().left;
-        });
+            currentTime = this.player.video.currentTime;
+        };
+        this.player.template.video.addEventListener(utils.nameMap.dragStart, dragStart);
         this.player.template.video.addEventListener(utils.nameMap.dragMove, seekMove);
         this.player.template.video.addEventListener(utils.nameMap.dragEnd, seekEnd);
+        this.player.template.mask.addEventListener(utils.nameMap.dragStart, dragStart);
+        this.player.template.mask.addEventListener(utils.nameMap.dragMove, seekMove);
+        this.player.template.mask.addEventListener(utils.nameMap.dragEnd, seekEnd);
     }
 
     initFullButton() {

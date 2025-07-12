@@ -18,11 +18,14 @@ class HotKey {
                 const event = e || window.event;
                 let percentage;
                 switch (event.keyCode) {
-                    case 32:
+                    case 23: // TV遥控器中键
+                    case 32: // PC空格键
                         event.preventDefault();
                         this.player.toggle();
                         break;
-                    case 37:
+                    case 21: // TV遥控器左方向键
+                        if (event.key != 'ArrowLeft') break;
+                    case 37: // PC左方向键
                         event.preventDefault();
                         if (this.player.options.live) {
                             break;
@@ -30,7 +33,9 @@ class HotKey {
                         this.player.seek(this.player.video.currentTime - 5);
                         this.player.controller.setAutoHide();
                         break;
-                    case 39:
+                    case 22: // TV遥控器右方向键
+                        if (event.key != 'ArrowRight') break;
+                    case 39: // PC右方向键
                         event.preventDefault();
                         if (this.player.options.live) {
                             break;
@@ -38,12 +43,16 @@ class HotKey {
                         this.player.seek(this.player.video.currentTime + 5);
                         this.player.controller.setAutoHide();
                         break;
-                    case 38:
+                    case 19: // TV遥控器上方向键
+                        if (event.key != 'ArrowUp') break;
+                    case 38: // PC上方向键
                         event.preventDefault();
                         percentage = this.player.volume() + 0.1;
                         this.player.volume(percentage);
                         break;
-                    case 40:
+                    case 20: // TV遥控器下方向键
+                        if (event.key != 'ArrowDown') break;
+                    case 40: // PC下方向键
                         event.preventDefault();
                         percentage = this.player.volume() - 0.1;
                         this.player.volume(percentage);

@@ -22,6 +22,7 @@ class Controller {
         this.initPlayButton();
         this.initThumbnails();
         this.initPlayedBar();
+        this.initVideoTouch(); // [SWH|+]
         this.initFullButton();
         this.initQualityButton();
         this.initScreenshotButton();
@@ -162,7 +163,6 @@ class Controller {
                     this.player.template.playedBarTime.classList.remove('hidden');
                 }
             });
-
             this.player.template.playedBarWrap.addEventListener('mouseleave', () => {
                 if (this.player.video.duration) {
                     this.thumbnails && this.thumbnails.hide();
@@ -170,6 +170,46 @@ class Controller {
                 }
             });
         }
+    }
+
+    // [SWH|+]
+    initVideoTouch() {
+        let xStart = 0, vLeft = 0;
+        const getPercentage = (e) => {
+            let x = e.clientX || e.changedTouches[0].clientX;
+            if (x == xStart) return false;
+            let percentage = (x - vLeft) / this.player.template.video.clientWidth;
+            percentage = Math.max(percentage, 0);
+            percentage = Math.min(percentage, 1);
+            return percentage;
+        };
+        const seekMove = (e) => {
+            if (this.player.options.live) return;
+            let percentage = getPercentage(e);
+            if (percentage === false) return;
+            this.player.moveBar = true;
+            this.show();
+            this.player.bar.set('played', percentage, 'width');
+            this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
+        };
+        const seekEnd = (e) => {
+            if (this.player.options.live) return;
+            document.removeEventListener(utils.nameMap.dragEnd, seekEnd);
+            document.removeEventListener(utils.nameMap.dragMove, seekMove);
+            let percentage = getPercentage(e);
+            if (percentage === false) return;
+            this.player.bar.set('played', percentage, 'width');
+            this.player.seek(this.player.bar.get('played') * this.player.video.duration);
+            this.player.moveBar = false;
+            this.hide();
+        };
+        this.player.template.video.addEventListener(utils.nameMap.dragStart, (e) => {
+            if (this.player.options.live) return;
+            xStart = e.clientX || e.changedTouches[0].clientX;
+            vLeft = utils.getBoundingClientRectViewLeft(this.player.template.video);
+        });
+        this.player.template.video.addEventListener(utils.nameMap.dragMove, seekMove);
+        this.player.template.video.addEventListener(utils.nameMap.dragEnd, seekEnd);
     }
 
     initFullButton() {

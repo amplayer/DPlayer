@@ -202,7 +202,7 @@ class Controller {
             return percentage;
         };
         const seekMove = (e) => {
-            if (this.player.options.live) return;
+            if (this.player.options.live || !this.player.video.duration) return;
             let percentage = getPercentage(e);
             if (percentage === false) return;
             this.player.moveBar = true;
@@ -224,7 +224,7 @@ class Controller {
         this.player.template.video.addEventListener(utils.nameMap.dragStart, (e) => {
             if (this.player.options.live) return;
             xStart = e.clientX || e.changedTouches[0].clientX;
-            vLeft = utils.getBoundingClientRectViewLeft(this.player.template.video);
+            vLeft = this.player.template.video.getBoundingClientRect().left;
         });
         this.player.template.video.addEventListener(utils.nameMap.dragMove, seekMove);
         this.player.template.video.addEventListener(utils.nameMap.dragEnd, seekEnd);

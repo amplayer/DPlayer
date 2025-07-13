@@ -94,6 +94,10 @@ const utils = {
     isChrome: /chrome/i.test(window.navigator.userAgent),
 
     isSafari: /safari/i.test(window.navigator.userAgent),
+    
+    isTouchDevice() {
+		return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches;
+	},
 
     storage: {
         set: (key, value) => {

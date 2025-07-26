@@ -7,9 +7,7 @@
     {{ if pic }}poster="{{ pic }}"{{ /if }}
     {{ if screenshot || enableSubtitle }}crossorigin="anonymous"{{ /if }}
     {{ if preload }}preload="{{ preload }}"{{ /if }}
-    {{ if airplay }}
-    nosrc
-    {{ else if url }}
+    {{ if url }}
     src="{{ url }}"
     {{ /if }}
     >

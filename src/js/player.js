@@ -197,9 +197,25 @@ class DPlayer {
             time = Math.min(time, this.video.duration);
         }
         if (this.video.currentTime < time) {
-            this.notice(`${this.tran('ff').replace('%s', (time - this.video.currentTime).toFixed(0))}`);
+            var forwardSeconds = time - this.video.currentTime, t = this.tran('ff');
+            this.notice(`${t.replace('%s', forwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-forward', function(oldNoticeEle, isOld){
+                if(isOld){
+                    oldNoticeEle.dataset.seek=parseFloat(oldNoticeEle.dataset.seek)+forwardSeconds
+                }else{
+                    oldNoticeEle.dataset.seek=forwardSeconds
+                }
+                return `${t.replace('%s', parseFloat(oldNoticeEle.dataset.seek).toFixed(0))}`
+            });
         } else if (this.video.currentTime > time) {
-            this.notice(`${this.tran('rew').replace('%s', (this.video.currentTime - time).toFixed(0))}`);
+            var backwardSeconds = this.video.currentTime - time, t = this.tran('rew');
+            this.notice(`${t.replace('%s', backwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-backward', function(oldNoticeEle, isOld){
+                if(isOld){
+                    oldNoticeEle.dataset.seek+=backwardSeconds
+                }else{
+                    oldNoticeEle.dataset.seek=backwardSeconds
+                }
+                return `${t.replace('%s', parseFloat(oldNoticeEle.dataset.seek).toFixed(0))}`
+            });
         }
 
         this.video.currentTime = time;
@@ -690,11 +706,12 @@ class DPlayer {
         });
     }
 
-    notice(text, time = 2000, opacity = 0.8, id) {
+    notice(text, time = 2000, opacity = 0.8, id, callback = null) {
         let oldNoticeEle;
         if (id) {
             oldNoticeEle = document.getElementById(`dplayer-notice-${id}`);
             if (oldNoticeEle) {
+                if(callback) text = callback(oldNoticeEle, true)
                 oldNoticeEle.innerHTML = text;
             }
             if (this.noticeList[id]) {
@@ -706,6 +723,7 @@ class DPlayer {
             const notice = Template.NewNotice(text, opacity, id);
             this.template.noticeList.appendChild(notice);
             oldNoticeEle = notice;
+            if(callback) text = callback(oldNoticeEle, false);
         }
 
         this.events.trigger('notice_show', oldNoticeEle);

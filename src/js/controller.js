@@ -52,7 +52,6 @@ class Controller {
         this.player.template.mobilePlayButton.addEventListener('click', () => {
             this.player.toggle();
         });
-        
         // [SWH|+] ---\
         this.player.template.mobileBackwardButton.addEventListener('click', () => {
             let t = Math.max(this.player.video.currentTime - 10, 0);
@@ -65,8 +64,6 @@ class Controller {
             this.player.controller.setAutoHide();
         });
         // -----------/
-
-
         if (!utils.isMobile) {
             if (!this.player.options.preventClickToggle) {
                 this.player.template.videoWrap.addEventListener('click', () => {
@@ -480,7 +477,34 @@ class Controller {
         if (!utils.isMobile) {
             this.player.container.removeEventListener('mousemove', this.setAutoHideHandler);
             this.player.container.removeEventListener('click', this.setAutoHideHandler);
+            this.player.template.playedBarWrap.removeEventListener('mouseenter');
+            this.player.template.playedBarWrap.removeEventListener('mouseleave');
         }
+        this.player.template.playButton.removeEventListener('click');
+        this.player.template.mobilePlayButton.removeEventListener('click');
+        this.player.template.mobileBackwardButton.removeEventListener('click');
+        this.player.template.mobileForwardButton.removeEventListener('click');
+        this.player.template.videoWrap.removeEventListener('click');
+        this.player.template.controllerMask.removeEventListener('click');
+        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragStart);
+        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragMove);
+        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragEnd);
+        this.player.template.video.removeEventListener(utils.nameMap.dragStart);
+        this.player.template.video.removeEventListener(utils.nameMap.dragMove);
+        this.player.template.video.removeEventListener(utils.nameMap.dragEnd);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragStart);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragMove);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragEnd);
+        this.player.template.browserFullButton.removeEventListener('click');
+        this.player.template.webFullButton.removeEventListener('click');
+        this.player.template.volumeBarWrapWrap.removeEventListener('click');
+        this.player.template.volumeBarWrapWrap.removeEventListener(utils.nameMap.dragStart);
+        this.player.template.volumeButtonIcon.removeEventListener('click');
+        if(this.player.template.qualityList) this.player.template.qualityList.removeEventListener('click');
+        if(this.player.template.camareButton) this.player.template.camareButton.removeEventListener('click');
+        this.player.template.video.removeEventListener('webkitplaybacktargetavailabilitychanged');
+        if(this.player.template.airplayButton) this.player.template.airplayButton.removeEventListener('click');
+        if(this.player.template.chromecastButton) this.player.template.chromecastButton.removeEventListener('click');
         clearTimeout(this.autoHideTimer);
     }
 }

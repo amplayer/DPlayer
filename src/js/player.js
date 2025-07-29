@@ -210,7 +210,7 @@ class DPlayer {
             var backwardSeconds = this.video.currentTime - time, t = this.tran('rew');
             this.notice(`${t.replace('%s', backwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-backward', function(oldNoticeEle, isOld){
                 if(isOld){
-                    oldNoticeEle.dataset.seek+=backwardSeconds
+                    oldNoticeEle.dataset.seek=parseFloat(oldNoticeEle.dataset.seek)+backwardSeconds
                 }else{
                     oldNoticeEle.dataset.seek=backwardSeconds
                 }

@@ -172,7 +172,7 @@ class DPlayer {
 
         this.hotkey = new HotKey(this);
 
-        this.contextmenu = new ContextMenu(this);
+        if(this.options.contextmenu !== null) this.contextmenu = new ContextMenu(this);
 
         this.initVideo(this.video, (this.quality && this.quality.type) || this.options.video.type);
 

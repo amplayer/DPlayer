@@ -267,6 +267,7 @@
     </div>
     {{ /if }}
 </div>
+{{ if options.contextmenu }}
 <div class="dplayer-menu">
     {{ each options.contextmenu }}
         <div class="dplayer-menu-item">
@@ -274,6 +275,7 @@
         </div>
     {{ /each }}
 </div>
+{{ /if }}
 <div class="dplayer-notice-list"></div>
 <div class="dplayer-mobile-button">
     <button class="dplayer-mobile-backward">

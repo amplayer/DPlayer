@@ -51,6 +51,7 @@ export default (options) => {
         options.lang = options.lang.toLowerCase();
     }
 
+    if (options.contextmenu === null) return options;
     options.contextmenu = options.contextmenu.concat([
         {
             key: 'video-info',

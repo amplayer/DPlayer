@@ -168,7 +168,7 @@ class DPlayer {
 
         this.paused = true;
 
-        this.timer = new Timer(this);
+        if(this.options.contextmenu !== null) this.timer = new Timer(this);
 
         this.hotkey = new HotKey(this);
 
@@ -176,7 +176,7 @@ class DPlayer {
 
         this.initVideo(this.video, (this.quality && this.quality.type) || this.options.video.type);
 
-        this.infoPanel = new InfoPanel(this);
+        if(this.options.contextmenu !== null) this.infoPanel = new InfoPanel(this);
 
         if (!this.danmaku && this.options.autoplay) {
             this.play();
@@ -248,7 +248,7 @@ class DPlayer {
                 })
                 .then(() => {});
         }
-        this.timer.enable('loading');
+        if(this.timer) this.timer.enable('loading');
         this.container.classList.remove('dplayer-paused');
         this.container.classList.add('dplayer-playing');
         if (this.danmaku) {
@@ -279,7 +279,7 @@ class DPlayer {
         if (!fromNative) {
             this.video.pause();
         }
-        this.timer.disable('loading');
+        if(this.timer) this.timer.disable('loading');
         this.container.classList.remove('dplayer-playing');
         this.container.classList.add('dplayer-paused');
         if (this.danmaku) {
@@ -768,7 +768,7 @@ class DPlayer {
         this.hotkey.destroy();
         if(this.contextmenu) this.contextmenu.destroy();
         this.controller.destroy();
-        this.timer.destroy();
+        if(this.timer) this.timer.destroy();
         this.video.src = '';
         this.container.innerHTML = '';
         this.events.trigger('destroy');

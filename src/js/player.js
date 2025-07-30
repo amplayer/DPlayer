@@ -766,7 +766,7 @@ class DPlayer {
         this.container.removeEventListener('click', this.containerClickFun, true);
         this.fullScreen.destroy();
         this.hotkey.destroy();
-        this.contextmenu.destroy();
+        if(this.contextmenu) this.contextmenu.destroy();
         this.controller.destroy();
         this.timer.destroy();
         this.video.src = '';

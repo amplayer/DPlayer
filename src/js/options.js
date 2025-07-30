@@ -58,14 +58,6 @@ export default (options) => {
                 player.infoPanel.triggle();
             },
         },
-        {
-            key: 'about-author',
-            link: 'https://diygod.me',
-        },
-        {
-            text: `DPlayer v${DPLAYER_VERSION}`,
-            link: 'https://github.com/MoePlayer/DPlayer',
-        },
     ]);
 
     return options;

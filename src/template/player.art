@@ -162,7 +162,7 @@
             <div class="dplayer-setting-box">
                 <div class="dplayer-setting-origin-panel">
                     {{ each options.customSettings }}
-                    <div class="dplayer-setting-item dplayer-setting-{{ $value.name }}">
+                    <div class="dplayer-setting-item dplayer-setting-{{ $value.name }}"{{ if ($value.type != 'checkbox' && $value.id) }} id="{{ $value.id }}"{{ /if }}>
                         <span class="dplayer-label">{{ $value.label }}</span>
                         <div class="dplayer-toggle">
                         {{ if ($value.type == 'checkbox') }}

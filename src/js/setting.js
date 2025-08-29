@@ -16,15 +16,15 @@ class Setting {
             var checkbox = container.querySelector('.dplayer-toggle-setting-input');
             if(!checkbox) {
                 if(typeof(customSetting.onclick)=='function'){
-                    container.addEventListener('click', () => {
-                        customSetting.onclick.call(container, this);
+                    container.addEventListener('click', (event) => {
+                        customSetting.onclick.call(container, this, event);
                     });
                 }
                 return;
             }
-            container.addEventListener('click', () => {
+            container.addEventListener('click', (event) => {
                 checkbox.checked = !checkbox.checked;
-                if(typeof(customSetting.onchange)=='function') return customSetting.onchange.call(checkbox, this);
+                if(typeof(customSetting.onchange)=='function') return customSetting.onchange.call(checkbox, this, event);
                 this.hide();
             });
         };

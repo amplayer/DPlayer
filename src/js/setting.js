@@ -17,15 +17,14 @@ class Setting {
             if(!checkbox) {
                 if(typeof(customSetting.onclick)=='function'){
                     container.addEventListener('click', () => {
-                        customSetting.onclick.apply(container);
-                        this.hide();
+                        customSetting.onclick.call(container, this);
                     });
                 }
                 return;
             }
             container.addEventListener('click', () => {
                 checkbox.checked = !checkbox.checked;
-                if(typeof(customSetting.onchange)=='function') customSetting.onchange.apply(checkbox)
+                if(typeof(customSetting.onchange)=='function') return customSetting.onchange.call(checkbox, this);
                 this.hide();
             });
         };

@@ -32,12 +32,9 @@ class Setting {
 
         let customs = this.player.options.customSettings; 
         for(var i=0;i<customs.length;i++){
-            var custom = customs[i];
-            if(custom.type=='checkbox'){
-                var container=this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
-                if(!container) continue;
-                addEventCheckbox(custom,container)
-            }
+            var custom = customs[i], container = this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
+            if(!container) continue;
+            addEventCheckbox(custom,container);
         }
         // -- customSetings --/
 

@@ -11,6 +11,36 @@ class Setting {
             this.show();
         });
 
+        // -- customSetings --\
+        var addEventCheckbox=(customSetting,container)=>{
+            var checkbox = container.querySelector('.dplayer-toggle-setting-input');
+            if(!checkbox) {
+                if(typeof(customSetting.onclick)=='function'){
+                    container.addEventListener('click', () => {
+                        customSetting.onclick.apply(container);
+                        this.hide();
+                    });
+                }
+                return;
+            }
+            container.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                if(typeof(customSetting.onchange)=='function') customSetting.onchange.apply(checkbox)
+                this.hide();
+            });
+        };
+
+        let customs = this.player.options.customSettings; 
+        for(var i=0;i<customs.length;i++){
+            var custom = customs[i];
+            if(custom.type=='checkbox'){
+                var container=this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
+                if(!container) continue;
+                addEventCheckbox(custom,container)
+            }
+        }
+        // -- customSetings --/
+
         // loop
         this.loop = this.player.options.loop;
         this.player.template.loopToggle.checked = this.loop;

@@ -14,6 +14,7 @@ class Setting {
         // -- customSetings --\
         var addEventCheckbox=(customSetting,container)=>{
             var checkbox = container.querySelector('.dplayer-toggle-setting-input');
+            if(typeof(customSetting.oninit)=='function') customSetting.oninit.call(container, this, checkbox);
             if(!checkbox) {
                 if(typeof(customSetting.onclick)=='function'){
                     container.addEventListener('click', (event) => {

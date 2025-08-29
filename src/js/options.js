@@ -23,7 +23,8 @@ export default (options) => {
         mutex: true,
         pluginOptions: { hls: {}, flv: {}, dash: {}, webtorrent: {} },
         preventClickToggle: false,
-        touchVideoChangeProgress: false,
+        touchVideoChangeProgress: false, 
+        customSettings: [] //[{name:'name',label:'',type:'checkbox/more'}]
     };
     for (const defaultKey in defaultOption) {
         if (defaultOption.hasOwnProperty(defaultKey) && !options.hasOwnProperty(defaultKey)) {

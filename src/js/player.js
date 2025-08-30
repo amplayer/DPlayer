@@ -45,11 +45,23 @@ class DPlayer {
         this.container = this.options.container;
         this.noticeList = {};
 
+        var hasLiveSettings = false; 
         this.container.classList.add('dplayer');
         if (!this.options.danmaku) {
             this.container.classList.add('dplayer-no-danmaku');
-            this.container.classList.add('dplayer-no-live-setting');
+        }else{
+            hasLiveSettings = true;
         }
+        if(!hasLiveSettings && this.options.customSettings){
+            for(var i=0;i<this.options.customSettings.length;i++){
+                if(!this.options.customSettings[i].live) {
+                    hasLiveSettings = true;
+                    break;
+                }
+            }
+        }
+        if(!hasLiveSettings) this.container.classList.add('dplayer-no-live-setting');
+
         if (this.options.live) {
             this.container.classList.add('dplayer-live');
         } else {

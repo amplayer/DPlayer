@@ -11,34 +11,7 @@ class Setting {
             this.show();
         });
 
-        // -- customSetings --\
-        var addEventCheckbox=(customSetting,container)=>{
-            var checkbox = container.querySelector('.dplayer-toggle-setting-input');
-            if(typeof(customSetting.oninit)=='function') customSetting.oninit.call(container, this, checkbox);
-            if(!checkbox) {
-                if(typeof(customSetting.onclick)=='function'){
-                    container.addEventListener('click', (event) => {
-                        customSetting.onclick.call(container, this, event);
-                    });
-                }
-                return;
-            }
-            container.addEventListener('click', (event) => {
-                checkbox.checked = !checkbox.checked;
-                if(typeof(customSetting.onchange)=='function') return customSetting.onchange.call(checkbox, this, event);
-                this.hide();
-            });
-        };
-
-        let customs = this.player.options.customSettings, hasLiveSettings = false; 
-        for(var i=0;i<customs.length;i++){
-            var custom = customs[i], container = this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
-            if(!container) continue;
-            addEventCheckbox(custom,container);
-            if(!hasLiveSettings && custom.live) hasLiveSettings = true; 
-        }
-        if(hasLiveSettings) this.player.template.container.classList.remove('dplayer-no-live-setting');
-        // -- customSetings --/
+        this.applyCustomSettings();
 
         // loop
         this.loop = this.player.options.loop;
@@ -134,6 +107,34 @@ class Setting {
                 document.addEventListener(utils.nameMap.dragEnd, danmakuUp);
                 this.player.template.danmakuOpacityBox.classList.add('dplayer-setting-danmaku-active');
             });
+        }
+    }
+
+    applyCustomSettings(){
+        if(!this.player.options.customSettings) return;
+        var addEventCheckbox=(customSetting,container)=>{
+            var checkbox = container.querySelector('.dplayer-toggle-setting-input');
+            if(typeof(customSetting.oninit)=='function') customSetting.oninit.call(container, this, checkbox);
+            if(!checkbox) {
+                if(typeof(customSetting.onclick)=='function'){
+                    container.addEventListener('click', (event) => {
+                        customSetting.onclick.call(container, this, event);
+                    });
+                }
+                return;
+            }
+            container.addEventListener('click', (event) => {
+                checkbox.checked = !checkbox.checked;
+                if(typeof(customSetting.onchange)=='function') return customSetting.onchange.call(checkbox, this, event);
+                this.hide();
+            });
+        };
+
+        let customs = this.player.options.customSettings; 
+        for(var i=0;i<customs.length;i++){
+            var custom = customs[i], container = this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
+            if(!container) continue;
+            addEventCheckbox(custom,container);
         }
     }
 

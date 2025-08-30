@@ -54,7 +54,7 @@ class DPlayer {
         }
         if(!hasLiveSettings && this.options.customSettings){
             for(var i=0;i<this.options.customSettings.length;i++){
-                if(!this.options.customSettings[i].live) {
+                if(this.options.customSettings[i].live) {
                     hasLiveSettings = true;
                     break;
                 }

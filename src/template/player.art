@@ -196,14 +196,14 @@
                             <label for="dplayer-toggle-dan"></label>
                         </div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-danunlimit  dplayer-live-setting">
+                    <div class="dplayer-setting-item dplayer-setting-danunlimit dplayer-live-setting">
                         <span class="dplayer-label">{{ tran('unlimited-danmaku') }}</span>
                         <div class="dplayer-toggle">
                             <input class="dplayer-danunlimit-setting-input" type="checkbox" name="dplayer-toggle-danunlimit">
                             <label for="dplayer-toggle-danunlimit"></label>
                         </div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-danmaku  dplayer-live-setting">
+                    <div class="dplayer-setting-item dplayer-setting-danmaku dplayer-live-setting">
                         <span class="dplayer-label">{{ tran('opacity-danmaku') }}</span>
                         <div class="dplayer-danmaku-bar-wrap">
                             <div class="dplayer-danmaku-bar">

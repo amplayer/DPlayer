@@ -201,6 +201,14 @@ class DPlayer {
         instances.push(this);
     }
 
+    incrdDatasetValue(obj,key,n) {
+        if(obj.dataset && key in obj.dataset){
+            obj.dataset[key]=obj.dataset[key]*1+n;
+        }else{
+            obj.dataset[key]=n;
+        }
+    }
+
     /**
      * Seek video
      */
@@ -211,23 +219,15 @@ class DPlayer {
         }
         if (this.video.currentTime < time) {
             var forwardSeconds = time - this.video.currentTime, t = this.tran('ff');
-            this.notice(`${t.replace('%s', forwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-forward', function(oldNoticeEle, isOld){
-                if(isOld){
-                    oldNoticeEle.dataset.seek=parseFloat(oldNoticeEle.dataset.seek)+forwardSeconds
-                }else{
-                    oldNoticeEle.dataset.seek=forwardSeconds
-                }
-                return `${t.replace('%s', parseFloat(oldNoticeEle.dataset.seek).toFixed(0))}`
+            this.notice(`${t.replace('%s', forwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-forward', (elem) => {
+                this.incrdDatasetValue(elem,'seek',forwardSeconds)
+                return `${t.replace('%s', parseFloat(elem.dataset.seek).toFixed(0))}`
             });
         } else if (this.video.currentTime > time) {
             var backwardSeconds = this.video.currentTime - time, t = this.tran('rew');
-            this.notice(`${t.replace('%s', backwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-backward', function(oldNoticeEle, isOld){
-                if(isOld){
-                    oldNoticeEle.dataset.seek=parseFloat(oldNoticeEle.dataset.seek)+backwardSeconds
-                }else{
-                    oldNoticeEle.dataset.seek=backwardSeconds
-                }
-                return `${t.replace('%s', parseFloat(oldNoticeEle.dataset.seek).toFixed(0))}`
+            this.notice(`${t.replace('%s', backwardSeconds.toFixed(0))}`, 2000, 0.8, 'seek-backward', (elem) => {
+                this.incrdDatasetValue(elem,'seek',backwardSeconds)
+                return `${t.replace('%s', parseFloat(elem.dataset.seek).toFixed(0))}`
             });
         }
 

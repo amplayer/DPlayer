@@ -503,7 +503,8 @@ class DPlayer {
                             if (eventIndex !== null) this.events.off('destroy', eventIndex);
                         }
 
-                        const dashjsPlayer = window.dashjs.MediaPlayer().create().initialize(video, videoURL, false);
+                        const dashjsPlayer = window.dashjs.MediaPlayer().create();
+                        dashjsPlayer.initialize(video, video.src, false, 0);
                         const options = this.options.pluginOptions.dash;
                         dashjsPlayer.updateSettings(options);
                         this.plugins.dash = { player: dashjsPlayer, eventIndex: 0 };

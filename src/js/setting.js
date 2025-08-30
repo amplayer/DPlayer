@@ -30,12 +30,14 @@ class Setting {
             });
         };
 
-        let customs = this.player.options.customSettings; 
+        let customs = this.player.options.customSettings, hasLiveSettings = false; 
         for(var i=0;i<customs.length;i++){
             var custom = customs[i], container = this.player.template.container.querySelector('.dplayer-setting-'+custom.name);
             if(!container) continue;
             addEventCheckbox(custom,container);
+            if(!hasLiveSettings && custom.live) hasLiveSettings = true; 
         }
+        if(hasLiveSettings) this.player.template.container.classList.remove('dplayer-no-live-setting');
         // -- customSetings --/
 
         // loop

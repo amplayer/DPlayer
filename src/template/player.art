@@ -162,7 +162,7 @@
             <div class="dplayer-setting-box">
                 <div class="dplayer-setting-origin-panel">
                     {{ each options.customSettings }}
-                    <div class="dplayer-setting-item dplayer-setting-{{ $value.name }}"{{ if ($value.type != 'checkbox' && $value.id) }} id="{{ $value.id }}"{{ /if }}>
+                    <div class="dplayer-setting-item dplayer-setting-{{ $value.name }} {{ if $value.live }}dplayer-live-setting{{else}}dplayer-vod-setting{{ /if }}"{{ if ($value.type != 'checkbox' && $value.id) }} id="{{ $value.id }}"{{ /if }}>
                         <span class="dplayer-label">{{ $value.label }}</span>
                         <div class="dplayer-toggle">
                         {{ if ($value.type == 'checkbox') }}
@@ -178,32 +178,32 @@
                         </div>
                     </div>
                     {{ /each }}
-                    <div class="dplayer-setting-item dplayer-setting-speed">
+                    <div class="dplayer-setting-item dplayer-setting-speed dplayer-vod-setting">
                         <span class="dplayer-label">{{ tran('speed') }}</span>
                         <div class="dplayer-toggle">{{@ icons.right }}</div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-loop">
+                    <div class="dplayer-setting-item dplayer-setting-loop dplayer-vod-setting">
                         <span class="dplayer-label">{{ tran('loop') }}</span>
                         <div class="dplayer-toggle">
                             <input class="dplayer-toggle-setting-input" type="checkbox" name="dplayer-toggle">
                             <label for="dplayer-toggle"></label>
                         </div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-showdan">
+                    <div class="dplayer-setting-item dplayer-setting-showdan dplayer-live-setting">
                         <span class="dplayer-label">{{ tran('show-danmaku') }}</span>
                         <div class="dplayer-toggle">
                             <input class="dplayer-showdan-setting-input" type="checkbox" name="dplayer-toggle-dan">
                             <label for="dplayer-toggle-dan"></label>
                         </div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-danunlimit">
+                    <div class="dplayer-setting-item dplayer-setting-danunlimit  dplayer-live-setting">
                         <span class="dplayer-label">{{ tran('unlimited-danmaku') }}</span>
                         <div class="dplayer-toggle">
                             <input class="dplayer-danunlimit-setting-input" type="checkbox" name="dplayer-toggle-danunlimit">
                             <label for="dplayer-toggle-danunlimit"></label>
                         </div>
                     </div>
-                    <div class="dplayer-setting-item dplayer-setting-danmaku">
+                    <div class="dplayer-setting-item dplayer-setting-danmaku  dplayer-live-setting">
                         <span class="dplayer-label">{{ tran('opacity-danmaku') }}</span>
                         <div class="dplayer-danmaku-bar-wrap">
                             <div class="dplayer-danmaku-bar">

@@ -210,9 +210,9 @@ class Controller {
             this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
         };
         const seekEnd = (e) => {
-            if (this.player.options.live || !this.player.video.duration) return;
             document.removeEventListener(utils.nameMap.dragEnd, seekEnd);
             document.removeEventListener(utils.nameMap.dragMove, seekMove);
+            if (this.player.options.live || !this.player.video.duration) return;
             let percentage = getPercentage(e);
             if (percentage === false) return;
             this.player.bar.set('played', percentage, 'width');
@@ -225,12 +225,9 @@ class Controller {
             xStart = e.clientX || e.changedTouches[0].clientX;
             currentTime = this.player.video.currentTime;
         };
-        this.player.template.video.addEventListener(utils.nameMap.dragStart, dragStart);
-        this.player.template.video.addEventListener(utils.nameMap.dragMove, seekMove);
-        this.player.template.video.addEventListener(utils.nameMap.dragEnd, seekEnd);
-        this.player.template.mask.addEventListener(utils.nameMap.dragStart, dragStart);
-        this.player.template.mask.addEventListener(utils.nameMap.dragMove, seekMove);
-        this.player.template.mask.addEventListener(utils.nameMap.dragEnd, seekEnd);
+        this.player.template.controllerMask.addEventListener(utils.nameMap.dragStart, dragStart);
+        this.player.template.controllerMask.addEventListener(utils.nameMap.dragMove, seekMove);
+        this.player.template.controllerMask.addEventListener(utils.nameMap.dragEnd, seekEnd);
     }
 
     initFullButton() {
@@ -489,12 +486,9 @@ class Controller {
         this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragStart);
         this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragMove);
         this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragEnd);
-        this.player.template.video.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.video.removeEventListener(utils.nameMap.dragMove);
-        this.player.template.video.removeEventListener(utils.nameMap.dragEnd);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragMove);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragEnd);
+        this.player.template.controllerMask.removeEventListener(utils.nameMap.dragStart);
+        this.player.template.controllerMask.removeEventListener(utils.nameMap.dragMove);
+        this.player.template.controllerMask.removeEventListener(utils.nameMap.dragEnd);
         this.player.template.browserFullButton.removeEventListener('click');
         this.player.template.webFullButton.removeEventListener('click');
         this.player.template.volumeBarWrapWrap.removeEventListener('click');

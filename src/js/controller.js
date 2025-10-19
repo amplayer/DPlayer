@@ -45,20 +45,22 @@ class Controller {
     }
 
     initPlayButton() {
-        this.player.template.playButton.addEventListener('click', () => {
+        this.playButtonToggle = () => {
             this.player.toggle();
-        });
+        }
+        this.controllerToggle = () => {
+            this.toggle();
+        }
+        this.player.template.playButton.addEventListener('click', this.playButtonToggle);
 
-        this.player.template.mobilePlayButton.addEventListener('click', () => {
-            this.player.toggle();
-        });
+        this.player.template.mobilePlayButton.addEventListener('click', this.playButtonToggle);
         // [SWH|+] ---\
-        this.player.template.mobileBackwardButton.addEventListener('click', () => {
+        this.player.template.mobileBackwardButton.addEventListener('click', this.mobileBackwardButtonOnClick = () => {
             let t = Math.max(this.player.video.currentTime - 10, 0);
             this.player.seek(t);
             this.player.controller.setAutoHide();
         });
-        this.player.template.mobileForwardButton.addEventListener('click', () => {
+        this.player.template.mobileForwardButton.addEventListener('click', this.mobileForwardButtonOnClick = () => {
             let t = Math.min(this.player.video.currentTime + 10, this.player.video.duration);
             this.player.seek(t);
             this.player.controller.setAutoHide();
@@ -66,20 +68,12 @@ class Controller {
         // -----------/
         if (!utils.isMobile) {
             if (!this.player.options.preventClickToggle) {
-                this.player.template.videoWrap.addEventListener('click', () => {
-                    this.player.toggle();
-                });
-                this.player.template.controllerMask.addEventListener('click', () => {
-                    this.player.toggle();
-                });
+                this.player.template.videoWrap.addEventListener('click', this.playButtonToggle);
+                this.player.template.controllerMask.addEventListener('click', this.playButtonToggle);
             }
         } else {
-            this.player.template.videoWrap.addEventListener('click', () => {
-                this.toggle();
-            });
-            this.player.template.controllerMask.addEventListener('click', () => {
-                this.toggle();
-            });
+            this.player.template.videoWrap.addEventListener('click', this.controllerToggle);
+            this.player.template.controllerMask.addEventListener('click', this.controllerToggle);
         }
     }
 
@@ -141,13 +135,13 @@ class Controller {
             this.player.moveBar = false;
         };
 
-        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragStart, () => {
+        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragStart, this.playedBarWrapOnDragStart = () => {
             this.player.moveBar = true;
             document.addEventListener(utils.nameMap.dragMove, thumbMove);
             document.addEventListener(utils.nameMap.dragEnd, thumbUp);
         });
 
-        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragMove, (e) => {
+        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragMove, this.playedBarWrapOnDragMove = (e) => {
             if (this.player.video.duration) {
                 const px = this.player.template.playedBarWrap.getBoundingClientRect().left;
                 const tx = (e.clientX || e.changedTouches[0].clientX) - px;
@@ -165,25 +159,27 @@ class Controller {
             }
         });
 
-        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragEnd, () => {
+        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragEnd, this.playedBarWrapOnDragEnd = () => {
             if (utils.isMobile) {
                 this.thumbnails && this.thumbnails.hide();
             }
         });
 
         if (!utils.isMobile) {
-            this.player.template.playedBarWrap.addEventListener('mouseenter', () => {
+            this.playedBarWrapOnMouseenter = () => {
                 if (this.player.video.duration) {
                     this.thumbnails && this.thumbnails.show();
                     this.player.template.playedBarTime.classList.remove('hidden');
                 }
-            });
-            this.player.template.playedBarWrap.addEventListener('mouseleave', () => {
+            }
+            this.player.template.playedBarWrap.addEventListener('mouseenter', this.playedBarWrapOnMouseenter);
+            this.playedBarWrapOnMouseleave = () => {
                 if (this.player.video.duration) {
                     this.thumbnails && this.thumbnails.hide();
                     this.player.template.playedBarTime.classList.add('hidden');
                 }
-            });
+            }
+            this.player.template.playedBarWrap.addEventListener('mouseleave', this.playedBarWrapOnMouseleave);
         }
     }
 
@@ -200,7 +196,7 @@ class Controller {
             percentage = Math.min(percentage, 1);
             return percentage;
         };
-        const seekMove = (e) => {
+        this.videoTouchOnDragMove = (e) => {
             if (this.player.options.live || !this.player.video.duration) return;
             let percentage = getPercentage(e);
             if (percentage === false) return;
@@ -209,10 +205,10 @@ class Controller {
             this.player.bar.set('played', percentage, 'width');
             this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
         };
-        const seekEnd = (e) => {
+        this.videoTouchOnDragEnd = (e) => {
             if (this.player.options.live || !this.player.video.duration) return;
-            document.removeEventListener(utils.nameMap.dragEnd, seekEnd);
-            document.removeEventListener(utils.nameMap.dragMove, seekMove);
+            document.removeEventListener(utils.nameMap.dragEnd, this.videoTouchOnDragEnd);
+            document.removeEventListener(utils.nameMap.dragMove, this.videoTouchOnDragMove);
             let percentage = getPercentage(e);
             if (percentage === false) return;
             this.player.bar.set('played', percentage, 'width');
@@ -220,25 +216,25 @@ class Controller {
             this.player.moveBar = false;
             this.hide();
         };
-        const dragStart = (e) => {
+        this.videoTouchOnDragStart = (e) => {
             if (this.player.options.live || !this.player.video.duration) return;
             xStart = e.clientX || e.changedTouches[0].clientX;
             currentTime = this.player.video.currentTime;
         };
-        this.player.template.video.addEventListener(utils.nameMap.dragStart, dragStart);
-        this.player.template.video.addEventListener(utils.nameMap.dragMove, seekMove);
-        this.player.template.video.addEventListener(utils.nameMap.dragEnd, seekEnd);
-        this.player.template.mask.addEventListener(utils.nameMap.dragStart, dragStart);
-        this.player.template.mask.addEventListener(utils.nameMap.dragMove, seekMove);
-        this.player.template.mask.addEventListener(utils.nameMap.dragEnd, seekEnd);
+        this.player.template.video.addEventListener(utils.nameMap.dragStart, this.videoTouchOnDragStart);
+        this.player.template.video.addEventListener(utils.nameMap.dragMove, this.videoTouchOnDragMove);
+        this.player.template.video.addEventListener(utils.nameMap.dragEnd, this.videoTouchOnDragEnd);
+        this.player.template.mask.addEventListener(utils.nameMap.dragStart, this.videoTouchOnDragStart);
+        this.player.template.mask.addEventListener(utils.nameMap.dragMove, this.videoTouchOnDragMove);
+        this.player.template.mask.addEventListener(utils.nameMap.dragEnd, this.videoTouchOnDragEnd);
     }
 
     initFullButton() {
-        this.player.template.browserFullButton.addEventListener('click', () => {
+        this.player.template.browserFullButton.addEventListener('click', this.browserFullButtonOnClick = () => {
             this.player.fullScreen.toggle('browser');
         });
 
-        this.player.template.webFullButton.addEventListener('click', () => {
+        this.player.template.webFullButton.addEventListener('click', this.webFullButtonOnClick = () => {
             this.player.fullScreen.toggle('web');
         });
     }
@@ -257,17 +253,17 @@ class Controller {
             this.player.template.volumeButton.classList.remove('dplayer-volume-active');
         };
 
-        this.player.template.volumeBarWrapWrap.addEventListener('click', (event) => {
+        this.player.template.volumeBarWrapWrap.addEventListener('click', this.volumeBarWrapWrapOnClick = (event) => {
             const e = event || window.event;
             const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
             this.player.volume(percentage);
         });
-        this.player.template.volumeBarWrapWrap.addEventListener(utils.nameMap.dragStart, () => {
+        this.player.template.volumeBarWrapWrap.addEventListener(utils.nameMap.dragStart, this.volumeBarWrapWrapOnDragStart = () => {
             document.addEventListener(utils.nameMap.dragMove, volumeMove);
             document.addEventListener(utils.nameMap.dragEnd, volumeUp);
             this.player.template.volumeButton.classList.add('dplayer-volume-active');
         });
-        this.player.template.volumeButtonIcon.addEventListener('click', () => {
+        this.player.template.volumeButtonIcon.addEventListener('click', this.volumeButtonIconOnClick = () => {
             if (this.player.video.muted) {
                 this.player.video.muted = false;
                 this.player.switchVolumeIcon();
@@ -282,7 +278,7 @@ class Controller {
 
     initQualityButton() {
         if (this.player.options.video.quality) {
-            this.player.template.qualityList.addEventListener('click', (e) => {
+            this.player.template.qualityList.addEventListener('click', this.qualityListOnClick = (e) => {
                 if (e.target.classList.contains('dplayer-quality-item')) {
                     this.player.switchQuality(e.target.dataset.index);
                 }
@@ -292,7 +288,7 @@ class Controller {
 
     initScreenshotButton() {
         if (this.player.options.screenshot) {
-            this.player.template.camareButton.addEventListener('click', () => {
+            this.player.template.camareButton.addEventListener('click', this.camareButtonOnClick = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = this.player.video.videoWidth;
                 canvas.height = this.player.video.videoHeight;
@@ -320,7 +316,7 @@ class Controller {
             if (window.WebKitPlaybackTargetAvailabilityEvent) {
                 this.player.video.addEventListener(
                     'webkitplaybacktargetavailabilitychanged',
-                    function (event) {
+                    this.videoOnWebkitplaybacktargetavailabilitychanged = function (event) {
                         switch (event.availability) {
                             case 'available':
                                 this.template.airplayButton.disable = false;
@@ -332,7 +328,7 @@ class Controller {
 
                         this.template.airplayButton.addEventListener(
                             'click',
-                            function () {
+                            this.airplayButtonOnClick = function () {
                                 this.video.webkitShowPlaybackTargetPicker();
                             }.bind(this)
                         );
@@ -410,7 +406,7 @@ class Controller {
                 console.error('Error launching media', err);
             };
 
-            this.player.template.chromecastButton.addEventListener('click', () => {
+            this.player.template.chromecastButton.addEventListener('click', this.chromecastButtonOnClick = () => {
                 if (isCasting) {
                     isCasting = false;
                     this.currentMedia.stop();
@@ -436,7 +432,7 @@ class Controller {
             this.player.user.set('subtitle', 0);
         });
 
-        this.player.template.subtitleButton.addEventListener('click', () => {
+        this.player.template.subtitleButton.addEventListener('click', this.subtitleButtonOnClick = () => {
             this.player.subtitle.toggle();
         });
     }
@@ -477,34 +473,36 @@ class Controller {
         if (!utils.isMobile) {
             this.player.container.removeEventListener('mousemove', this.setAutoHideHandler);
             this.player.container.removeEventListener('click', this.setAutoHideHandler);
-            this.player.template.playedBarWrap.removeEventListener('mouseenter');
-            this.player.template.playedBarWrap.removeEventListener('mouseleave');
+            this.player.template.playedBarWrap.removeEventListener('mouseenter',this.playedBarWrapOnMouseenter);
+            this.player.template.playedBarWrap.removeEventListener('mouseleave',this.playedBarWrapOnMouseleave);
         }
-        this.player.template.playButton.removeEventListener('click');
-        this.player.template.mobilePlayButton.removeEventListener('click');
-        this.player.template.mobileBackwardButton.removeEventListener('click');
-        this.player.template.mobileForwardButton.removeEventListener('click');
-        this.player.template.videoWrap.removeEventListener('click');
-        this.player.template.controllerMask.removeEventListener('click');
-        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragMove);
-        this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragEnd);
-        this.player.template.video.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.video.removeEventListener(utils.nameMap.dragMove);
-        this.player.template.video.removeEventListener(utils.nameMap.dragEnd);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragMove);
-        this.player.template.mask.removeEventListener(utils.nameMap.dragEnd);
-        this.player.template.browserFullButton.removeEventListener('click');
-        this.player.template.webFullButton.removeEventListener('click');
-        this.player.template.volumeBarWrapWrap.removeEventListener('click');
-        this.player.template.volumeBarWrapWrap.removeEventListener(utils.nameMap.dragStart);
-        this.player.template.volumeButtonIcon.removeEventListener('click');
-        if(this.player.template.qualityList) this.player.template.qualityList.removeEventListener('click');
-        if(this.player.template.camareButton) this.player.template.camareButton.removeEventListener('click');
-        this.player.template.video.removeEventListener('webkitplaybacktargetavailabilitychanged');
-        if(this.player.template.airplayButton) this.player.template.airplayButton.removeEventListener('click');
-        if(this.player.template.chromecastButton) this.player.template.chromecastButton.removeEventListener('click');
+        if(this.playButtonToggle) this.player.template.playButton.removeEventListener('click',this.playButtonToggle);
+        if(this.playButtonToggle) this.player.template.mobilePlayButton.removeEventListener('click',this.playButtonToggle);
+        if(this.mobileBackwardButtonOnClick) this.player.template.mobileBackwardButton.removeEventListener('click',this.mobileBackwardButtonOnClick);
+        if(this.mobileForwardButtonOnClick) this.player.template.mobileForwardButton.removeEventListener('click',this.mobileForwardButtonOnClick);
+        if(this.controllerToggle) this.player.template.videoWrap.removeEventListener('click',this.controllerToggle);
+        if(this.controllerToggle) this.player.template.controllerMask.removeEventListener('click',this.controllerToggle);
+        if(this.playedBarWrapOnDragStart) this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragStart,this.playedBarWrapOnDragStart);
+        if(this.playedBarWrapOnDragMove) this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragMove,this.playedBarWrapOnDragMove);
+        if(this.playedBarWrapOnDragEnd) this.player.template.playedBarWrap.removeEventListener(utils.nameMap.dragEnd,this.playedBarWrapOnDragEnd);
+        if (utils.isMobile) {
+        this.player.template.video.removeEventListener(utils.nameMap.dragStart,this.videoTouchOnDragStart);
+        this.player.template.video.removeEventListener(utils.nameMap.dragMove,this.videoTouchOnDragMove);
+        this.player.template.video.removeEventListener(utils.nameMap.dragEnd,this.videoTouchOnDragEnd);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragStart,this.videoTouchOnDragStart);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragMove,this.videoTouchOnDragMove);
+        this.player.template.mask.removeEventListener(utils.nameMap.dragEnd,this.videoTouchOnDragEnd);
+        }
+        if(this.browserFullButtonOnClick) this.player.template.browserFullButton.removeEventListener('click',this.browserFullButtonOnClick);
+        if(this.webFullButtonOnClick) this.player.template.webFullButton.removeEventListener('click',this.webFullButtonOnClick);
+        if(this.volumeBarWrapWrapOnClick) this.player.template.volumeBarWrapWrap.removeEventListener('click',this.volumeBarWrapWrapOnClick);
+        if(this.volumeBarWrapWrapOnClickDragStart) this.player.template.volumeBarWrapWrap.removeEventListener(utils.nameMap.dragStart,this.volumeBarWrapWrapOnClickDragStart);
+        if(this.volumeButtonIconOnClick) this.player.template.volumeButtonIcon.removeEventListener('click',this.volumeButtonIconOnClick);
+        if(this.player.template.qualityList && this.qualityListOnClick) this.player.template.qualityList.removeEventListener('click',this.qualityListOnClick);
+        if(this.player.template.camareButton && this.camareButtonOnClick) this.player.template.camareButton.removeEventListener('click',this.camareButtonOnClick);
+        if(this.videoOnWebkitplaybacktargetavailabilitychanged) this.player.template.video.removeEventListener('webkitplaybacktargetavailabilitychanged',this.videoOnWebkitplaybacktargetavailabilitychanged);
+        if(this.player.template.airplayButton && this.airplayButtonOnClick) this.player.template.airplayButton.removeEventListener('click',this.airplayButtonOnClick);
+        if(this.player.template.chromecastButton && this.subtitleButtonOnClick) this.player.template.chromecastButton.removeEventListener('click',this.subtitleButtonOnClick);
         clearTimeout(this.autoHideTimer);
     }
 }

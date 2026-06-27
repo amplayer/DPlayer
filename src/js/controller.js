@@ -116,18 +116,20 @@ class Controller {
     }
 
     initPlayedBar() {
-        const thumbMove = (e) => {
-            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
+        const thumbMove = (event) => {
+            const e = event || window.event;
+            let percentage = (((e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX)) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             this.player.bar.set('played', percentage, 'width');
             this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
         };
 
-        const thumbUp = (e) => {
+        const thumbUp = (event) => {
             document.removeEventListener(utils.nameMap.dragEnd, thumbUp);
             document.removeEventListener(utils.nameMap.dragMove, thumbMove);
-            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
+            const e = event || window.event;
+            let percentage = (((e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX)) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             this.player.bar.set('played', percentage, 'width');
@@ -141,10 +143,11 @@ class Controller {
             document.addEventListener(utils.nameMap.dragEnd, thumbUp);
         });
 
-        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragMove, this.playedBarWrapOnDragMove = (e) => {
+        this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragMove, this.playedBarWrapOnDragMove = (event) => {
             if (this.player.video.duration) {
                 const px = this.player.template.playedBarWrap.getBoundingClientRect().left;
-                const tx = (e.clientX || e.changedTouches[0].clientX) - px;
+                const e = event || window.event;
+                const tx = ((e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX)) - px;
                 if (tx < 0 || tx > this.player.template.playedBarWrap.offsetWidth) {
                     return;
                 }
@@ -187,8 +190,9 @@ class Controller {
     initVideoTouch() {
         if (!utils.isMobile) return;
         let xStart = 0, currentTime = 0;
-        const getPercentage = (e) => {
-            let x = e.clientX || e.changedTouches[0].clientX;
+        const getPercentage = (event) => {
+            const e = event || window.event;
+            let x = (e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX);
             if (x == xStart) return false;
             let percentage = (x - xStart) / this.player.template.video.clientWidth;
             percentage = (currentTime / this.player.video.duration) + percentage;
@@ -196,29 +200,30 @@ class Controller {
             percentage = Math.min(percentage, 1);
             return percentage;
         };
-        this.videoTouchOnDragMove = (e) => {
+        this.videoTouchOnDragMove = (event) => {
             if (this.player.options.live || !this.player.video.duration) return;
-            let percentage = getPercentage(e);
+            let percentage = getPercentage(event);
             if (percentage === false) return;
             this.player.moveBar = true;
             this.show();
             this.player.bar.set('played', percentage, 'width');
             this.player.template.ptime.innerHTML = utils.secondToTime(percentage * this.player.video.duration);
         };
-        this.videoTouchOnDragEnd = (e) => {
+        this.videoTouchOnDragEnd = (event) => {
             if (this.player.options.live || !this.player.video.duration) return;
             document.removeEventListener(utils.nameMap.dragEnd, this.videoTouchOnDragEnd);
             document.removeEventListener(utils.nameMap.dragMove, this.videoTouchOnDragMove);
-            let percentage = getPercentage(e);
+            let percentage = getPercentage(event);
             if (percentage === false) return;
             this.player.bar.set('played', percentage, 'width');
             this.player.seek(percentage * this.player.video.duration);
             this.player.moveBar = false;
             this.hide();
         };
-        this.videoTouchOnDragStart = (e) => {
+        this.videoTouchOnDragStart = (event) => {
             if (this.player.options.live || !this.player.video.duration) return;
-            xStart = e.clientX || e.changedTouches[0].clientX;
+            const e = event || window.event;
+            xStart = (e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX);
             currentTime = this.player.video.currentTime;
         };
         this.player.template.video.addEventListener(utils.nameMap.dragStart, this.videoTouchOnDragStart);
@@ -244,7 +249,7 @@ class Controller {
 
         const volumeMove = (event) => {
             const e = event || window.event;
-            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+            const percentage = (((e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX)) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
             this.player.volume(percentage);
         };
         const volumeUp = () => {
@@ -255,7 +260,7 @@ class Controller {
 
         this.player.template.volumeBarWrapWrap.addEventListener('click', this.volumeBarWrapWrapOnClick = (event) => {
             const e = event || window.event;
-            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+            const percentage = (((e.clientX != null ? e.clientX : e.changedTouches?.[0]?.clientX)) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
             this.player.volume(percentage);
         });
         this.player.template.volumeBarWrapWrap.addEventListener(utils.nameMap.dragStart, this.volumeBarWrapWrapOnDragStart = () => {
